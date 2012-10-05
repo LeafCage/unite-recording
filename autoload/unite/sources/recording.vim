@@ -13,7 +13,7 @@ let s:save_register = ''
 
 "=============================================================================
 "Functions
-function! unite#sources#recording#begin(char) "{{{
+function! unite#sources#recording#Begin(char) "{{{
   let recording_description = input('Unite-recording: Input recording description: ')
   if empty(recording_description)
     return
@@ -40,7 +40,7 @@ endfunction
 "}}}
 
 
-function! unite#sources#recording#save(char) "{{{
+function! unite#sources#recording#Save(char) "{{{
   let recording_description = input('Unite-recording: Input recording description: ')
   if empty(recording_description)
     return
@@ -55,7 +55,7 @@ function! s:_wf_add_recording(char, recording_description) "{{{
     call mkdir(g:unite_source_recording_directory, 'p')
   endif
   let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
-  exe 'let recording = {a:recording_description : @'. a:char. '}'
+  exe 'let recording = [a:recording_description , @'. a:char. ']'
   call insert(g:recordings, recording)
   call writefile(map(deepcopy(g:recordings), 'string(v:val)'), g:unite_source_recording_directory. '/'. 'recording')
 endfunction
@@ -89,7 +89,7 @@ function! s:source.gather_candidates(args, context) "{{{
   let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
   let recordings = deepcopy(g:recordings)
   let format = '[%s] %s'
-  call map(recordings, '{"word": printf(format, v:key, v:val) }')
+  call map(recordings, '{"word": printf(format, v:val[0], v:val[1])}')
   let cdds = recordings
 
   let candidate = {}
