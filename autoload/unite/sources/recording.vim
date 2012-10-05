@@ -23,13 +23,10 @@ let s:save_register = ''
 
 "-----------------------------------------------------------------------------
 function! s:_wf_add_recording(char, recording_description) "{{{
-  if !isdirectory(g:unite_source_recording_directory)
-    call mkdir(g:unite_source_recording_directory, 'p')
-  endif
   "let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
   exe 'let recording = [a:recording_description , @'. a:char. ']'
   call insert(g:recordings, recording)
-  call writefile(map(deepcopy(g:recordings), 'string(v:val)'), g:unite_source_recording_directory. '/'. 'recording')
+  call unite#sources#recording#write_recordingfile()
 endfunction
 "}}}
 
@@ -42,11 +39,21 @@ function! s:_jd_duplicate_recording_description(recording_description) "{{{
 endfunction
 "}}}
 
+function! unite#sources#recording#write_recordingfile() "{{{
+  if !isdirectory(g:unite_source_recording_directory)
+    call mkdir(g:unite_source_recording_directory, 'p')
+  endif
+  call writefile(map(deepcopy(g:recordings), 'string(v:val)'), g:unite_source_recording_directory. '/'. 'recording')
+endfunction
+"}}}
+
+
 "=============================================================================
 "Functions
 function! unite#sources#recording#Begin(char) "{{{
   let recording_description = input('Unite-recording: Input recording description: ')
   if empty(recording_description) || s:_jd_duplicate_recording_description(recording_description)
+    redraw!| echo 'Recording is canceled.'
     return
   endif
   exe 'let s:save_register = @'. a:char
@@ -74,6 +81,7 @@ endfunction
 function! unite#sources#recording#Save(char) "{{{
   let recording_description = input('Unite-recording: Input recording description: ')
   if empty(recording_description) || s:_jd_duplicate_recording_description(recording_description)
+    redraw!| echo 'Save is canceled.'
     return
   endif
   call s:_wf_add_recordingcollection(a:char, recording_description)
@@ -107,6 +115,7 @@ function! s:source.gather_candidates(args, context) "{{{
   let format = '[%s] %s'
   call map(recordings, '{"word": printf(format, v:val[0], v:val[1]),
     \ "kind": "recording",
+    \ "action__description": v:val[0],
     \ "action__recording": v:val[1],
     \ }')
   let cdds = recordings
@@ -114,7 +123,7 @@ function! s:source.gather_candidates(args, context) "{{{
   let candidate = {}
   let candidate.word = '[:Add recording:]'
   let candidate.kind = 'add_recording'
-  call insert(cdds, candidate)
+  call add(cdds, candidate)
 
   return cdds
 endfunction
