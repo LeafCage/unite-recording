@@ -89,12 +89,15 @@ function! s:source.gather_candidates(args, context) "{{{
   let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
   let recordings = deepcopy(g:recordings)
   let format = '[%s] %s'
-  call map(recordings, '{"word": printf(format, v:val[0], v:val[1])}')
+  call map(recordings, '{"word": printf(format, v:val[0], v:val[1]),
+    \ "kind": "recording",
+    \ "action__recording": v:val[1],
+    \ }')
   let cdds = recordings
 
   let candidate = {}
   let candidate.word = '[:Add recording:]'
-  let candidate.kind = 'recording'
+  let candidate.kind = 'add_recording'
   call insert(cdds, candidate)
 
   return cdds
