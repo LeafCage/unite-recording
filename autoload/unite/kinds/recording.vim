@@ -29,7 +29,7 @@ endfunction
 
 "-----------------------------------------------------------------------------
 let s:kind.action_table.add = {}
-let s:kind.action_table.add.description = 'Add recording'
+let s:kind.action_table.add.description = 'Add recording.'
 let s:kind.action_table.add.is_selectable = 1
 function! s:kind.action_table.add.func(candidate) "{{{
   call unite#sources#recording#Begin(g:unite_source_recording_char)
@@ -82,6 +82,50 @@ function! s:kind.action_table.delete.func(candidate) "{{{
   for candidate in a:candidate
     call filter(g:recordings, 'v:val[0] !=# '. string(candidate.action__description))
     call unite#sources#recording#write_recordingfile()
+  endfor
+endfunction
+"}}}
+
+"-----------------------------------------------------------------------------
+let s:kind.action_table.sort_ahead = {}
+let s:kind.action_table.sort_ahead.description = 'Sort it ahead.'
+let s:kind.action_table.sort_ahead.is_quit = 0
+let s:kind.action_table.sort_ahead.is_invalidate_cache = 1
+function! s:kind.action_table.sort_ahead.func(candidate) "{{{
+  let i = s:_gn_idx_matching2description_1recordings(candidate)
+  if i == 0
+    return
+  endif
+  let t = g:recordings[i-1]
+  let g:recordings[i-1] = g:recordings[i]
+  let g:recordings[i] = t
+  call unite#sources#recording#write_recordingfile()
+endfunction
+"}}}
+
+"-----------------------------------------------------------------------------
+let s:kind.action_table.sort_behind = {}
+let s:kind.action_table.sort_behind.description = 'Sort it behind.'
+let s:kind.action_table.sort_behind.is_quit = 0
+let s:kind.action_table.sort_behind.is_invalidate_cache = 1
+function! s:kind.action_table.sort_behind.func(candidate) "{{{
+  let i = s:_gn_idx_matching2description_1recordings(a:candidate)
+  if i == len(g:recordings)-1
+    return
+  endif
+  let t = g:recordings[i+1]
+  let g:recordings[i+1] = g:recordings[i]
+  let g:recordings[i] = t
+  call unite#sources#recording#write_recordingfile()
+endfunction
+"}}}
+
+"=============================================================================
+function! s:_gn_idx_matching2description_1recordings(candidate) "{{{
+  for pkd in g:recordings
+    if pkd[0] ==# a:candidate.action__description
+      return index(g:recordings, pkd)
+    endif
   endfor
 endfunction
 "}}}
