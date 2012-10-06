@@ -13,21 +13,22 @@ function! s:_rf_recordings() "{{{
   return map(readfile(g:unite_source_recording_directory.'/'.'recording'), 'eval(v:val)')
 endfunction
 "}}}
-let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
+let s:recordings = exists('s:recordings') ? s:recordings : s:_rf_recordings()
 
 let s:save_register = ''
 
 "-----------------------------------------------------------------------------
+
 function! s:_wf_add_recording(char, recording_description) "{{{
-  "let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
+  "let s:recordings = exists('s:recordings') ? s:recordings : s:_rf_recordings()
   exe 'let recording = [a:recording_description , @'. a:char. ']'
-  call insert(g:recordings, recording)
-  call unite#sources#recording#write_recordingfile()
+  call insert(s:recordings, recording)
+  call unite#sources#recording#Write_recordingfile()
 endfunction
 "}}}
 
 function! s:_jd_duplicate_recording_description(recording_description) "{{{
-  for pkd in g:recordings
+  for pkd in s:recordings
     if get(pkd, 0, '') ==# a:recording_description
       return 1
     endif
@@ -35,14 +36,19 @@ function! s:_jd_duplicate_recording_description(recording_description) "{{{
 endfunction
 "}}}
 
-function! unite#sources#recording#write_recordingfile() "{{{
+
+function! unite#sources#recording#Write_recordingfile() "{{{
   if !isdirectory(g:unite_source_recording_directory)
     call mkdir(g:unite_source_recording_directory, 'p')
   endif
-  call writefile(map(deepcopy(g:recordings), 'string(v:val)'), g:unite_source_recording_directory. '/'. 'recording')
+  call writefile(map(deepcopy(s:recordings), 'string(v:val)'), g:unite_source_recording_directory. '/'. 'recording')
 endfunction
 "}}}
 
+function! unite#sources#recording#Export_recordings() "{{{
+  return s:recordings
+endfunction
+"}}}
 
 "=============================================================================
 "Functions
@@ -114,8 +120,8 @@ let s:source = {}
 let s:source.name = 'recording'
 
 function! s:source.gather_candidates(args, context) "{{{
-  "let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
-  let recordings = deepcopy(g:recordings)
+  "let s:recordings = exists('s:recordings') ? s:recordings : s:_rf_recordings()
+  let recordings = deepcopy(s:recordings)
   let format = '[%s] %s'
   call map(recordings, '{"word": printf(format, v:val[0], v:val[1]),
     \ "kind": "recording",

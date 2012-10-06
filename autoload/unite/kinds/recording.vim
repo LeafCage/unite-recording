@@ -1,5 +1,8 @@
 let s:save_cpo = &cpo| set cpo&vim
 "=============================================================================
+
+let s:recordings = unite#sources#recording#Export_recordings()
+"=============================================================================
 function! unite#kinds#recording#define() "{{{
   return s:kind
 endfunction
@@ -62,13 +65,13 @@ function! s:__sence_finishedRecordingAppending() "{{{
 endfunction
 "}}}
 function! s:___wf_append_recording(char, recording_description) "{{{
-  for pkd in g:recordings
+  for pkd in s:recordings
     if pkd[0] ==# a:recording_description
-      exe 'let g:recordings[index(g:recordings, pkd)][1] = @'. g:unite_source_recording_char
+      exe 'let s:recordings[index(s:recordings, pkd)][1] = @'. g:unite_source_recording_char
       break
     endif
   endfor
-  call unite#sources#recording#write_recordingfile()
+  call unite#sources#recording#Write_recordingfile()
 endfunction
 "}}}
 
@@ -80,8 +83,8 @@ let s:kind.action_table.delete.is_selectable = 1
 let s:kind.action_table.delete.is_invalidate_cache = 1
 function! s:kind.action_table.delete.func(candidate) "{{{
   for candidate in a:candidate
-    call filter(g:recordings, 'v:val[0] !=# '. string(candidate.action__description))
-    call unite#sources#recording#write_recordingfile()
+    call filter(s:recordings, 'v:val[0] !=# '. string(candidate.action__description))
+    call unite#sources#recording#Write_recordingfile()
   endfor
 endfunction
 "}}}
@@ -92,14 +95,14 @@ let s:kind.action_table.sort_ahead.description = 'Sort it ahead.'
 let s:kind.action_table.sort_ahead.is_quit = 0
 let s:kind.action_table.sort_ahead.is_invalidate_cache = 1
 function! s:kind.action_table.sort_ahead.func(candidate) "{{{
-  let i = s:_gn_idx_matching2description_1recordings(candidate)
+  let i = s:_gn_idx_matching2description_1recordings(a:candidate)
   if i == 0
     return
   endif
-  let t = g:recordings[i-1]
-  let g:recordings[i-1] = g:recordings[i]
-  let g:recordings[i] = t
-  call unite#sources#recording#write_recordingfile()
+  let t = s:recordings[i-1]
+  let s:recordings[i-1] = s:recordings[i]
+  let s:recordings[i] = t
+  call unite#sources#recording#Write_recordingfile()
 endfunction
 "}}}
 
@@ -110,21 +113,21 @@ let s:kind.action_table.sort_behind.is_quit = 0
 let s:kind.action_table.sort_behind.is_invalidate_cache = 1
 function! s:kind.action_table.sort_behind.func(candidate) "{{{
   let i = s:_gn_idx_matching2description_1recordings(a:candidate)
-  if i == len(g:recordings)-1
+  if i == len(s:recordings)-1
     return
   endif
-  let t = g:recordings[i+1]
-  let g:recordings[i+1] = g:recordings[i]
-  let g:recordings[i] = t
-  call unite#sources#recording#write_recordingfile()
+  let t = s:recordings[i+1]
+  let s:recordings[i+1] = s:recordings[i]
+  let s:recordings[i] = t
+  call unite#sources#recording#Write_recordingfile()
 endfunction
 "}}}
 
 "=============================================================================
 function! s:_gn_idx_matching2description_1recordings(candidate) "{{{
-  for pkd in g:recordings
+  for pkd in s:recordings
     if pkd[0] ==# a:candidate.action__description
-      return index(g:recordings, pkd)
+      return index(s:recordings, pkd)
     endif
   endfor
 endfunction
