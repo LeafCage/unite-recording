@@ -95,19 +95,27 @@ endfunction
 "Unite define
 function! unite#sources#recording#define() "{{{
   return s:source
+  unlet s:source
 endfunction
 "}}}
 
+let s:kind__add_recording = {}
+let s:kind__add_recording.name = 'add_recording'
+let s:kind__add_recording.default_action = 'add_recording'
+let s:kind__add_recording.parents = []
+let s:kind__add_recording.action_table = {}
+let s:kind__add_recording.action_table.add_recording = {}
+let s:kind__add_recording.action_table.add_recording.is_selectable = 1
+function! s:kind__add_recording.action_table.add_recording.func(candidate) "{{{
+  call unite#sources#recording#Begin(g:unite_source_recording_char)
+endfunction
+"}}}
+call unite#define_kind(s:kind__add_recording)
+unlet s:kind__add_recording
+
+"-----------------------------------------------------------------------------
 let s:source = {}
 let s:source.name = 'recording'
-"let s:source.action_table = {}
-"let s:source.action_table.recording = {}
-"let s:source.action_table.recording.test = {}
-"function! s:source.action_table.recording.test.func(candidate) "{{{
-"  echo candidate
-"endfunction
-""}}}
-"let s:source.default_action = {'*': 'yank'}
 
 function! s:source.gather_candidates(args, context) "{{{
   "let g:recordings = exists('g:recordings') ? g:recordings : s:_rf_recordings()
@@ -129,6 +137,5 @@ function! s:source.gather_candidates(args, context) "{{{
 endfunction
 "}}}
 
-"-----------------------------------------------------------------------------
 "=============================================================================
 let &cpo = s:save_cpo| unlet s:save_cpo

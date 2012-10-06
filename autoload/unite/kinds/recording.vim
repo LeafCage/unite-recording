@@ -28,6 +28,15 @@ endfunction
 "}}}
 
 "-----------------------------------------------------------------------------
+let s:kind.action_table.add = {}
+let s:kind.action_table.add.description = 'Add recording'
+let s:kind.action_table.add.is_selectable = 1
+function! s:kind.action_table.add.func(candidate) "{{{
+  call unite#sources#recording#Begin(g:unite_source_recording_char)
+endfunction
+"}}}
+
+"-----------------------------------------------------------------------------
 let s:kind.action_table.append = {}
 let s:kind.action_table.append.description = 'Append recording to "g:unite_source_recording_char" register.'
 function! s:kind.action_table.append.func(candidate) "{{{
