@@ -5,10 +5,6 @@ let g:unite_source_recording_directory =
   \ exists('g:unite_source_recording_directory') ? g:unite_source_recording_directory :
   \ g:unite_data_directory
 
-let g:unite_source_recording_char =
-  \ exists('g:unite_source_recording_char') ? g:unite_source_recording_char :
-  \ 'z'
-
 
 function! s:_rf_recordings() "{{{
   if !filereadable(g:unite_source_recording_directory.'/'.'recording')
