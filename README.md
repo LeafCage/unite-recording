@@ -25,3 +25,35 @@ Uniteインターフェイスで好きな時に呼び出すプラグインであ
 
 - `<Plug>(unite-recording-execute)`  
   Recording 用のレジスタを再生する。
+
+
+##unite-actions
+:Unite recording 専用の action である。
+
+- `set`
+Recording を Recording 用レジスタに set する。
+既定 action である。
+
+- `execute`
+Recordingをその場で実行する。
+
+- `add`
+新しく Recording を登録する。  
+:UniteRecordingBeginと同じ効果である。
+
+- `append`
+その Recording に追記する。q{A-Z} と同じ効果である。
+
+- `revise`
+Recording を修正する。修正専用バッファに選択 Recording が書き出される。  
+このバッファを :write すると Recording の内容が変更される。
+
+- `delete`
+Recording を削除する。
+
+- `sort_ahead`
+その Recording を一段上位に並べる。
+
+- `sort_behind`
+その Recording を一段下位に並べる。
+
