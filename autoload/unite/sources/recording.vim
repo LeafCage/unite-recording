@@ -61,7 +61,7 @@ function! unite#sources#recording#Begin(char) "{{{
   exe 'let s:save_register = @'. a:char
   exe 'normal! q'. a:char
   let [s:now_used_char, s:now_used_recording_description] = [a:char, recording_description]
-  aug recording
+  aug unite_recording
     au!
     au CursorMoved * silent call <SID>__sence_finishedRecording()
   aug END
@@ -73,7 +73,7 @@ function! s:__sence_finishedRecording() "{{{
   endif
   call s:_wf_add_recording(s:now_used_char, s:now_used_recording_description)
   unlet s:now_used_char s:now_used_recording_description
-  aug recording
+  aug unite_recording
     au!
   aug END
 endfunction
