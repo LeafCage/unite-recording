@@ -86,7 +86,7 @@ function! unite#sources#recording#Save(char) "{{{
     redraw!| echo 'Save is canceled.'
     return
   endif
-  call s:_wf_add_recordingcollection(a:char, recording_description)
+  call s:_wf_add_recording(a:char, recording_description)
 endfunction
 "}}}
 

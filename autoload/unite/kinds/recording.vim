@@ -17,7 +17,8 @@ let s:kind.action_table = {}
 let s:kind.action_table.execute = {}
 let s:kind.action_table.execute.description = 'Yank to "g:unite_source_recording_char" register and Execute recording.'
 function! s:kind.action_table.execute.func(candidate) "{{{
-  exe 'let @'. g:unite_source_recording_char. " = '". a:candidate.action__recording. "'"
+  let s = a:candidate.action__recording
+  exe 'let @'. g:unite_source_recording_char. ' = s'
   exe 'normal! @'. g:unite_source_recording_char
 endfunction
 "}}}
@@ -26,7 +27,8 @@ endfunction
 let s:kind.action_table.set = {}
 let s:kind.action_table.set.description = 'Yank to "g:unite source_recording_char" register.'
 function! s:kind.action_table.set.func(candidate) "{{{
-  exe 'let @'. g:unite_source_recording_char. " = '". a:candidate.action__recording. "'"
+  let s = a:candidate.action__recording
+  exe 'let @'. g:unite_source_recording_char. ' = s'
 endfunction
 "}}}
 
@@ -43,7 +45,8 @@ endfunction
 let s:kind.action_table.append = {}
 let s:kind.action_table.append.description = 'Append recording to "g:unite_source_recording_char" register.'
 function! s:kind.action_table.append.func(candidate) "{{{
-  exe 'let @'. g:unite_source_recording_char. ' = '. string(a:candidate.action__recording)
+  let s = string(a:candidate.action__recording)
+  exe 'let @'. g:unite_source_recording_char. ' = s'
   let s:save_register = eval('@'. g:unite_source_recording_char)
   exe 'normal! q'. substitute(g:unite_source_recording_char, '\w', '\u\0', '')
   let [s:now_used_char, s:now_used_recording_description] = [g:unite_source_recording_char, a:candidate.action__description]
@@ -79,17 +82,18 @@ endfunction
 let s:kind.action_table.revise = {}
 let s:kind.action_table.revise.description = 'Revise recording.'
 function! s:kind.action_table.revise.func(candidate) "{{{
-  silent exe 'belowright 3split +setl\ ft=revise-recording [recording\ -\ '. a:candidate.action__description. ']'
-  exe 'let @'. g:unite_source_recording_char. '=' string(a:candidate.action__recording)
-  put z
+  silent exe 'belowright 3split +setl\ ft=revise-recording [revise-recording]'
+  exe 'let @'. g:unite_source_recording_char. ' = '. string(a:candidate.action__recording)
+  exe 'put '. g:unite_source_recording_char
+  nnoremap <buffer>q     :bd!<CR>
   1delete _
   echo 'unite-recording: 次のバッファを:writeすると変更が反映されます。'
   let b:unite_recording_description = a:candidate.action__description
 endfunction
 "}}}
 aug revise_recording
-  au BufWriteCmd \[recording\ -\ *\]   call <SID>Revise_write()
-  au BufLeave \[recording\ -\ *\]     redraw!| echo ''| silent bd!
+  au BufWriteCmd \[revise-recording]   call <SID>Revise_write()
+  au BufLeave \[revise-recording]     redraw!| echo ''| silent bd!
 aug END
 function! s:Revise_write() "{{{
   let i = s:_gn_idx_matching2description_1recordings(b:unite_recording_description)
