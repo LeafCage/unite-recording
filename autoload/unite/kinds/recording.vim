@@ -79,9 +79,10 @@ endfunction
 "}}}
 
 "-----------------------------------------------------------------------------
-let s:kind.action_table.revise = {}
-let s:kind.action_table.revise.description = 'Revise recording.'
-function! s:kind.action_table.revise.func(candidate) "{{{
+let s:kind.action_table.revise_recording = {}
+let s:kind.action_table.revise_recording.description = 'Revise recording.'
+let s:kind.action_table.revise_recording.is_invalidate_cache = 1
+function! s:kind.action_table.revise_recording.func(candidate) "{{{
   silent exe 'belowright 3split +setl\ ft=revise-recording [revise-recording]'
   exe 'let @'. g:unite_source_recording_char. ' = '. string(a:candidate.action__recording)
   exe 'put '. g:unite_source_recording_char
@@ -100,6 +101,21 @@ function! s:Revise_write() "{{{
   let s:recordings[i][1] = join(getline(1, '$'), '')
   call unite#sources#recording#Write_recordingfile()
   redraw!| echo ''| silent bd!
+endfunction
+"}}}
+
+"-----------------------------------------------------------------------------
+let s:kind.action_table.revise_description = {}
+let s:kind.action_table.revise_description.description = 'Revise description.'
+let s:kind.action_table.revise_description.is_invalidate_cache = 1
+function! s:kind.action_table.revise_description.func(candidate) "{{{
+  let i = s:_gn_idx_matching2description_1recordings(a:candidate)
+  let d = input('', s:recordings[i][0])
+  if empty(d)
+    return
+  endif
+  let s:recordings[i][0] = d
+  call unite#sources#recording#Write_recordingfile()
 endfunction
 "}}}
 
@@ -153,7 +169,7 @@ endfunction
 
 "=============================================================================
 function! s:_gn_idx_matching2description_1recordings(candidate6description) "{{{
-  let description = type(a:candidate6description)==type([]) ?
+  let description = type(a:candidate6description)==type({}) ?
     \ a:candidate6description.action__description : a:candidate6description
   for pkd in s:recordings
     if pkd[0] ==# description

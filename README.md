@@ -15,16 +15,20 @@ Uniteインターフェイスで好きな時に呼び出すプラグインであ
 
 ##Interface
 - `:Unite recording`  
-  Recordingを一覧する。default action は set である。  
-  これは Recording用のレジスタに該当Recordingをセットする。
+Recordingを一覧する。default action は set である。  
+これは Recording用のレジスタに該当Recordingをセットする。
 
 - `:UniteRecordingBegin`  
-  新しく Recording を登録する。  
-  初めに description の入力が求められ、次に Recording が開始される。  
-  description は Recording の名前として機能する。
+新しく Recording を登録する。  
+初めに description の入力が求められ、次に Recording が開始される。  
+description は Recording の名前として機能する。
+
+- `:UniteRecordingSave`  
+引数としてレジスタ名に使われる文字を一つ取る。引数を省略した場合は `g:unite_source_recording_char` が使われる。  
+引数として与えられたレジスタの内容を unite-recording に登録する。
 
 - `<Plug>(unite-recording-execute)`  
-  Recording 用のレジスタを再生する。
+Recording 用のレジスタを再生する。
 
 
 ##unite-actions
@@ -44,9 +48,12 @@ Recordingをその場で実行する。
 - `append`  
 その Recording に追記する。`q{A-Z}` と同じ効果である。  
 
-- `revise`  
+- `revise_recording`  
 Recording を修正する。修正専用バッファに選択 Recording が書き出される。  
 このバッファを :write すると Recording の内容が変更される。  
+
+- `revise_description`  
+Recording に付けた名前を修正する。
 
 - `delete`  
 Recording を削除する。  
