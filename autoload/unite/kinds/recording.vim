@@ -43,11 +43,11 @@ endfunction
 let s:kind.action_table.append = {}
 let s:kind.action_table.append.description = 'Append recording to "g:unite_source_recording_char" register.'
 function! s:kind.action_table.append.func(candidate) "{{{
-  exe 'let @'. g:unite_source_recording_char. " = '". a:candidate.action__recording. "'"
-  exe 'let s:save_register = @'. g:unite_source_recording_char
+  exe 'let @'. g:unite_source_recording_char. ' = '. string(a:candidate.action__recording)
+  let s:save_register = eval('@'. g:unite_source_recording_char)
   exe 'normal! q'. substitute(g:unite_source_recording_char, '\w', '\u\0', '')
   let [s:now_used_char, s:now_used_recording_description] = [g:unite_source_recording_char, a:candidate.action__description]
-  aug recording
+  aug unite_recording
     au!
     au CursorMoved * silent call <SID>__sence_finishedRecordingAppending()
   aug END
@@ -59,7 +59,7 @@ function! s:__sence_finishedRecordingAppending() "{{{
   endif
   call s:___wf_append_recording(s:now_used_char, s:now_used_recording_description)
   unlet s:now_used_char s:now_used_recording_description
-  aug recording
+  aug unite_recording
     au!
   aug END
 endfunction
@@ -72,6 +72,30 @@ function! s:___wf_append_recording(char, recording_description) "{{{
     endif
   endfor
   call unite#sources#recording#Write_recordingfile()
+endfunction
+"}}}
+
+"-----------------------------------------------------------------------------
+let s:kind.action_table.revise = {}
+let s:kind.action_table.revise.description = 'Revise recording.'
+function! s:kind.action_table.revise.func(candidate) "{{{
+  silent exe 'belowright 3split +setl\ ft=revise-recording [recording\ -\ '. a:candidate.action__description. ']'
+  exe 'let @'. g:unite_source_recording_char. '=' string(a:candidate.action__recording)
+  put z
+  1delete _
+  echo 'unite-recording: 次のバッファを:writeすると変更が反映されます。'
+  let b:unite_recording_description = a:candidate.action__description
+endfunction
+"}}}
+aug revise_recording
+  au BufWriteCmd \[recording\ -\ *\]   call <SID>Revise_write()
+  au BufLeave \[recording\ -\ *\]     redraw!| echo ''| silent bd!
+aug END
+function! s:Revise_write() "{{{
+  let i = s:_gn_idx_matching2description_1recordings(b:unite_recording_description)
+  let s:recordings[i][1] = join(getline(1, '$'), '')
+  call unite#sources#recording#Write_recordingfile()
+  redraw!| echo ''| silent bd!
 endfunction
 "}}}
 
@@ -124,9 +148,11 @@ endfunction
 "}}}
 
 "=============================================================================
-function! s:_gn_idx_matching2description_1recordings(candidate) "{{{
+function! s:_gn_idx_matching2description_1recordings(candidate6description) "{{{
+  let description = type(a:candidate6description)==type([]) ?
+    \ a:candidate6description.action__description : a:candidate6description
   for pkd in s:recordings
-    if pkd[0] ==# a:candidate.action__description
+    if pkd[0] ==# description
       return index(s:recordings, pkd)
     endif
   endfor
