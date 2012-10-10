@@ -28,32 +28,32 @@ Uniteインターフェイスで好きな時に呼び出すプラグインであ
 
 
 ##unite-actions
-:Unite recording 専用の action である。
+:Unite recording 専用の action である。  
 
-- `set`
-Recording を Recording 用レジスタに set する。
-既定 action である。
+- `set`  
+Recording を Recording 用レジスタに set する。  
+既定 action である。  
 
-- `execute`
-Recordingをその場で実行する。
+- `execute`  
+Recordingをその場で実行する。  
 
-- `add`
+- `add`  
 新しく Recording を登録する。  
-:UniteRecordingBeginと同じ効果である。
+:UniteRecordingBeginと同じ効果である。  
 
-- `append`
-その Recording に追記する。q{A-Z} と同じ効果である。
+- `append`  
+その Recording に追記する。`q{A-Z}` と同じ効果である。  
 
-- `revise`
+- `revise`  
 Recording を修正する。修正専用バッファに選択 Recording が書き出される。  
-このバッファを :write すると Recording の内容が変更される。
+このバッファを :write すると Recording の内容が変更される。  
 
-- `delete`
-Recording を削除する。
+- `delete`  
+Recording を削除する。  
 
-- `sort_ahead`
-その Recording を一段上位に並べる。
+- `sort_ahead`  
+その Recording を一段上位に並べる。  
 
-- `sort_behind`
-その Recording を一段下位に並べる。
+- `sort_behind`  
+その Recording を一段下位に並べる。  
 
