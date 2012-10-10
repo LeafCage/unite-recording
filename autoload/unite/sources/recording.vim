@@ -122,7 +122,7 @@ let s:source.name = 'recording'
 function! s:source.gather_candidates(args, context) "{{{
   "let s:recordings = exists('s:recordings') ? s:recordings : s:_rf_recordings()
   let recordings = deepcopy(s:recordings)
-  let format = '[%s] %s'
+  let format = '[%s]	%s'
   call map(recordings, '{"word": printf(format, v:val[0], v:val[1]),
     \ "kind": "recording",
     \ "action__description": v:val[0],
